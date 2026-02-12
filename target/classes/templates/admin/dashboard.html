@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard - School Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="bi bi-building"></i> School Management - Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link text-white">
+                            <i class="bi bi-person-circle"></i> 
+                            Welcome, <span th:text="${user.fullName}">Admin</span>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" th:href="@{/logout}">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-people"></i> Students</h5>
+                        <h2 th:text="${studentCount != null ? studentCount : '1,234'}">1,234</h2>
+                        <a href="/students" class="text-white">Manage Students →</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-building"></i> Departments</h5>
+                        <h2 th:text="${departmentCount != null ? departmentCount : '8'}">8</h2>
+                        <a href="/departments" class="text-white">Manage Departments →</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-file-text"></i> Reports</h5>
+                        <h2 th:text="${reportCount != null ? reportCount : '156'}">156</h2>
+                        <a href="/reports" class="text-white">View Reports →</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-database"></i> Backups</h5>
+                        <h2 th:text="${backupCount != null ? backupCount : '24'}">24</h2>
+                        <a href="/backups" class="text-white">Manage Backups →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Recent Activity</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <i class="bi bi-check-circle text-success"></i> 
+                                New student enrolled - John Doe
+                                <small class="text-muted d-block">2 minutes ago</small>
+                            </div>
+                            <div class="list-group-item">
+                                <i class="bi bi-check-circle text-success"></i> 
+                                Grade report submitted - Mathematics
+                                <small class="text-muted d-block">15 minutes ago</small>
+                            </div>
+                            <div class="list-group-item">
+                                <i class="bi bi-shield text-warning"></i> 
+                                System backup completed
+                                <small class="text-muted d-block">1 hour ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>System Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tr>
+                                <td>Database:</td>
+                                <td><span class="badge bg-success">Connected</span></td>
+                            </tr>
+                            <tr>
+                                <td>Active Sessions:</td>
+                                <td>24</td>
+                            </tr>
+                            <tr>
+                                <td>Last Backup:</td>
+                                <td>Today 02:00 AM</td>
+                            </tr>
+                            <tr>
+                                <td>Storage Used:</td>
+                                <td>45%</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
