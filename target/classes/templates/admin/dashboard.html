@@ -11,21 +11,27 @@
     <nav class="navbar navbar-dark bg-primary navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="/dashboard">
-                <i class="bi bi-building"></i> School Management - Admin
+                <i class="bi bi-building"></i> School Management - Admin Dashboard
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <span class="nav-link text-white">
-                            <i class="bi bi-person-circle"></i> 
-                            Welcome, <span th:text="${user.fullName}">Admin</span>
-                        </span>
+                        <a class="nav-link" href="/students">
+                            <i class="bi bi-people"></i> Students
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" th:href="@{/logout}">
+                        <a class="nav-link" href="/teachers">
+                            <i class="bi bi-person-badge"></i> Teachers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/grades/my-grades">
+                            <i class="bi bi-journal-text"></i> Grades
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
                             <i class="bi bi-box-arrow-right"></i> Logout
                         </a>
                     </li>
@@ -35,97 +41,103 @@
     </nav>
 
     <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-3 mb-4">
-                <div class="card bg-primary text-white">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h2><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+                <p class="text-muted">Welcome back, <span th:text="${username}">Admin</span>!</p>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-people"></i> Students</h5>
-                        <h2 th:text="${studentCount != null ? studentCount : '1,234'}">1,234</h2>
-                        <a href="/students" class="text-white">Manage Students →</a>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Total Students</h6>
+                                <h3 th:text="${studentCount}">0</h3>
+                            </div>
+                            <i class="bi bi-people fs-1"></i>
+                        </div>
+                        <a href="/students" class="text-white">View All →</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-4">
-                <div class="card bg-success text-white">
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-building"></i> Departments</h5>
-                        <h2 th:text="${departmentCount != null ? departmentCount : '8'}">8</h2>
-                        <a href="/departments" class="text-white">Manage Departments →</a>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Total Teachers</h6>
+                                <h3 th:text="${teacherCount}">0</h3>
+                            </div>
+                            <i class="bi bi-person-badge fs-1"></i>
+                        </div>
+                        <a href="/teachers" class="text-white">View All →</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-4">
-                <div class="card bg-info text-white">
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-file-text"></i> Reports</h5>
-                        <h2 th:text="${reportCount != null ? reportCount : '156'}">156</h2>
-                        <a href="/reports" class="text-white">View Reports →</a>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Active Classes</h6>
+                                <h3>12</h3>
+                            </div>
+                            <i class="bi bi-door-open fs-1"></i>
+                        </div>
+                        <a href="#" class="text-white">Manage →</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-4">
-                <div class="card bg-warning text-white">
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-database"></i> Backups</h5>
-                        <h2 th:text="${backupCount != null ? backupCount : '24'}">24</h2>
-                        <a href="/backups" class="text-white">Manage Backups →</a>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Pending Reviews</h6>
+                                <h3>5</h3>
+                            </div>
+                            <i class="bi bi-check2-circle fs-1"></i>
+                        </div>
+                        <a href="/grades/pending-review" class="text-white">Review →</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-md-6">
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5>Recent Activity</h5>
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Quick Actions</h5>
                     </div>
                     <div class="card-body">
-                        <div class="list-group">
-                            <div class="list-group-item">
-                                <i class="bi bi-check-circle text-success"></i> 
-                                New student enrolled - John Doe
-                                <small class="text-muted d-block">2 minutes ago</small>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <a href="/students/register" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-person-plus"></i> Add Student
+                                </a>
                             </div>
-                            <div class="list-group-item">
-                                <i class="bi bi-check-circle text-success"></i> 
-                                Grade report submitted - Mathematics
-                                <small class="text-muted d-block">15 minutes ago</small>
+                            <div class="col-md-3">
+                                <a href="/teachers/register" class="btn btn-outline-success w-100">
+                                    <i class="bi bi-person-plus"></i> Add Teacher
+                                </a>
                             </div>
-                            <div class="list-group-item">
-                                <i class="bi bi-shield text-warning"></i> 
-                                System backup completed
-                                <small class="text-muted d-block">1 hour ago</small>
+                            <div class="col-md-3">
+                                <a href="/grades/entry" class="btn btn-outline-info w-100">
+                                    <i class="bi bi-pencil-square"></i> Enter Grades
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="#" class="btn btn-outline-secondary w-100">
+                                    <i class="bi bi-building"></i> Manage Classes
+                                </a>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>System Status</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <tr>
-                                <td>Database:</td>
-                                <td><span class="badge bg-success">Connected</span></td>
-                            </tr>
-                            <tr>
-                                <td>Active Sessions:</td>
-                                <td>24</td>
-                            </tr>
-                            <tr>
-                                <td>Last Backup:</td>
-                                <td>Today 02:00 AM</td>
-                            </tr>
-                            <tr>
-                                <td>Storage Used:</td>
-                                <td>45%</td>
-                            </tr>
-                        </table>
                     </div>
                 </div>
             </div>

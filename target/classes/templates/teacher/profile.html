@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Teacher Profile - School Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-success navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/teachers/dashboard">
+                <i class="bi bi-building"></i> School Management - Teacher Profile
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/teachers">
+                            <i class="bi bi-arrow-left"></i> Back to Teachers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Alerts -->
+        <div class="row">
+            <div class="col-md-12">
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Header -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="bi bi-person-badge"></i> 
+                            Teacher Profile: <span th:text="${teacher.fullName}">John Doe</span>
+                        </h4>
+                        <div>
+                            <a th:href="@{'/teachers/' + ${teacher.id} + '/edit'}" class="btn btn-light btn-sm me-2">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <span th:if="${teacher.employmentStatus == 'ACTIVE'}" 
+                                  class="badge bg-light text-success fs-6">Active</span>
+                            <span th:if="${teacher.employmentStatus == 'ON_LEAVE'}" 
+                                  class="badge bg-light text-warning fs-6">On Leave</span>
+                            <span th:if="${teacher.employmentStatus == 'SUSPENDED'}" 
+                                  class="badge bg-light text-danger fs-6">Suspended</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left Column - Personal Info -->
+            <div class="col-md-4">
+                <!-- Photo/ID Card -->
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
+                            <i class="bi bi-person-circle fs-1 text-success"></i>
+                        </div>
+                        <h4 th:text="${teacher.fullName}">John Doe</h4>
+                        <p class="text-muted">
+                            <i class="bi bi-envelope"></i> <span th:text="${teacher.email}">john@school.com</span><br>
+                            <i class="bi bi-telephone"></i> <span th:text="${teacher.phoneNumber}">+1234567890</span>
+                        </p>
+                        <hr>
+                        <p>
+                            <strong>Employee Number:</strong><br>
+                            <span class="badge bg-secondary fs-6" th:text="${teacher.employeeNumber}">T2025001</span>
+                        </p>
+                        <p>
+                            <strong>Display ID:</strong><br>
+                            <span class="badge bg-info" th:text="${teacher.displayId}">TEA/25/0001</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Personal Details Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-person"></i> Personal Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Date of Birth:</th>
+                                <td th:text="${#temporals.format(teacher.dateOfBirth, 'dd MMM yyyy')}">01 Jan 1990</td>
+                            </tr>
+                            <tr>
+                                <th>Gender:</th>
+                                <td th:text="${teacher.gender}">Male</td>
+                            </tr>
+                            <tr>
+                                <th>Address:</th>
+                                <td th:text="${teacher.address}">123 Main St</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Contact Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-telephone"></i> Contact Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Official Email:</th>
+                                <td th:text="${teacher.officialEmail}">j.doe@school.edu</td>
+                            </tr>
+                            <tr>
+                                <th>Office Extension:</th>
+                                <td th:text="${teacher.officeExtension}">1234</td>
+                            </tr>
+                            <tr>
+                                <th>Office Room:</th>
+                                <td th:text="${teacher.officeRoom}">B-201</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Professional Info -->
+            <div class="col-md-8">
+                <!-- Employment Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-briefcase"></i> Employment Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th>Hire Date:</th>
+                                        <td th:text="${#temporals.format(teacher.hireDate, 'dd MMM yyyy')}">15 Jan 2025</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Employment Type:</th>
+                                        <td>
+                                            <span th:text="${teacher.employmentType}" 
+                                                  class="badge bg-info">Permanent</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Contract End:</th>
+                                        <td th:if="${teacher.contractEndDate}" 
+                                            th:text="${#temporals.format(teacher.contractEndDate, 'dd MMM yyyy')}">31 Dec 2025</td>
+                                        <td th:if="${!teacher.contractEndDate}">N/A</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th>Salary Grade:</th>
+                                        <td th:text="${teacher.salaryGrade}">T5</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Leave Balance:</th>
+                                        <td th:text="${teacher.leaveBalanceDays} + ' days'">25 days</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Last Login:</th>
+                                        <td th:if="${teacher.lastLogin}" 
+                                            th:text="${#temporals.format(teacher.lastLogin, 'dd MMM yyyy HH:mm')}">01 Feb 2026 09:30</td>
+                                        <td th:if="${!teacher.lastLogin}">Never</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Qualifications Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-mortarboard"></i> Qualifications & Subjects</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Qualification Summary:</h6>
+                        <p class="bg-light p-3 rounded" th:text="${teacher.qualificationSummary}">
+                            B.Sc. Mathematics, M.Ed. with 10 years teaching experience
+                        </p>
+                        
+                        <h6>Subjects Certified:</h6>
+                        <div>
+                            <span th:each="subject : ${teacher.subjectsCertified}"
+                                  class="badge bg-info me-2 p-2 mb-2"
+                                  th:text="${subject}">Mathematics</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workload Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-clock"></i> Workload Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="border rounded p-3">
+                                    <h3 th:text="${teacher.teachingHoursPerWeek}">25</h3>
+                                    <p class="text-muted mb-0">Teaching Hours/Week</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3">
+                                    <h3 th:text="${teacher.administrativeHoursPerWeek}">5</h3>
+                                    <p class="text-muted mb-0">Admin Hours/Week</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3">
+                                    <h3 th:text="${teacher.teachingHoursPerWeek + teacher.administrativeHoursPerWeek}">30</h3>
+                                    <p class="text-muted mb-0">Total Hours/Week</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Department Affiliations Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-building"></i> Department Affiliations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div th:each="deptId : ${teacher.departmentAffiliations}" 
+                                 class="col-md-4 mb-3">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-building fs-2 d-block text-success"></i>
+                                    <span class="fw-bold" th:text="'Department ' + ${deptId}">Dept 1</span>
+                                    <span th:if="${deptId == teacher.primaryDepartmentId}" 
+                                          class="badge bg-success d-block mt-2">Primary</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Training Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Training & Development</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Last Training:</strong><br>
+                                <span th:if="${teacher.lastTrainingDate}" 
+                                      th:text="${#temporals.format(teacher.lastTrainingDate, 'dd MMM yyyy')}">15 Dec 2025</span>
+                                <span th:if="${!teacher.lastTrainingDate}">None recorded</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Next Training:</strong><br>
+                                <span th:if="${teacher.nextTrainingDate}" 
+                                      th:text="${#temporals.format(teacher.nextTrainingDate, 'dd MMM yyyy')}">15 Mar 2026</span>
+                                <span th:if="${!teacher.nextTrainingDate}">Not scheduled</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

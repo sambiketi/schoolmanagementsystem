@@ -21,7 +21,7 @@ public class AuthController {
         return "login";
     }
     
-    @GetMapping("/dashboard")
+    @GetMapping("/home")
     public String dashboard(Model model, Authentication authentication) {
         String username = authentication.getName();
         User user = userService.findByUsername(username)

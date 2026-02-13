@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "teachers")
@@ -79,4 +80,10 @@ public class Teacher {
     
     @Column(name = "leave_balance_days")
     private Integer leaveBalanceDays;
+    @Column(name = "created_at")    
+    
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at") 
+    private LocalDateTime updatedAt;
 }
