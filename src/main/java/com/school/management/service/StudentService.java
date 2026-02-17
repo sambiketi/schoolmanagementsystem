@@ -28,11 +28,12 @@ public class StudentService {
         this.userService = userService;
     }
 
-    public Student registerStudent(StudentRegistrationDto dto) {
+    public Student registerStudent(StudentRegistrationDto dto, Long createdByUserId) {
         // Create user account first (ID_ONLY auth type)
         User user = new User();
         user.setDisplayIdPrefix("STU");
-        user.setDisplayIdYear(dto.getAdmissionYear());
+        // Use current year for display ID, not admission year
+        user.setDisplayIdYear(java.time.Year.now().getValue());
         user.setDisplayIdSequence(generateNextSequence());
         user.setAuthType("ID_ONLY");
         user.setFullName(dto.getFullName());
@@ -44,6 +45,7 @@ public class StudentService {
         user.setIsActive(true);
         user.setIsLocked(false);
         user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedBy(createdByUserId);
 
         User savedUser = userRepository.save(user);
 
@@ -151,6 +153,7 @@ public class StudentService {
         private String parentRelationship;
         private String parentPhone;
         private String parentEmail;
+        private String parentOccupation;
         private String emergencyContactName;
         private String emergencyContactPhone;
         private String emergencyContactRelationship;
@@ -186,6 +189,8 @@ public class StudentService {
         public void setParentPhone(String parentPhone) { this.parentPhone = parentPhone; }
         public String getParentEmail() { return parentEmail; }
         public void setParentEmail(String parentEmail) { this.parentEmail = parentEmail; }
+        public String getParentOccupation() { return parentOccupation; }
+        public void setParentOccupation(String parentOccupation) { this.parentOccupation = parentOccupation; }
         public String getEmergencyContactName() { return emergencyContactName; }
         public void setEmergencyContactName(String emergencyContactName) { this.emergencyContactName = emergencyContactName; }
         public String getEmergencyContactPhone() { return emergencyContactPhone; }

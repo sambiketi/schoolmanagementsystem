@@ -1,10 +1,13 @@
 package com.school.management.web;
 
+import com.school.management.dto.ClassDTO;
 import com.school.management.dto.GradeDTO;
 import com.school.management.dto.GradeEntryDTO;
+import com.school.management.service.ClassService;
 import com.school.management.service.GradeService;
 import com.school.management.service.StudentService;
 import com.school.management.service.TeacherService;
+import com.school.management.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/grades")
@@ -24,14 +28,20 @@ public class GradeController {
     private final GradeService gradeService;
     private final TeacherService teacherService;
     private final StudentService studentService;
+    private final ClassService classService;
+    private final UserService userService;
 
     public GradeController(
             GradeService gradeService,
             TeacherService teacherService,
-            StudentService studentService) {
+            StudentService studentService,
+            ClassService classService,
+            UserService userService) {
         this.gradeService = gradeService;
         this.teacherService = teacherService;
         this.studentService = studentService;
+        this.classService = classService;
+        this.userService = userService;
     }
 
     /**
@@ -43,7 +53,14 @@ public class GradeController {
         Long teacherId = getCurrentTeacherId(userDetails);
         
         model.addAttribute("gradeEntry", new GradeEntryDTO());
-        model.addAttribute("classes", gradeService.getAvailableClasses());
+        
+        // Get classes for the current teacher
+        List<ClassDTO> teacherClasses = classService.getClassesForTeacher(teacherId);
+        List<String> classNames = teacherClasses.stream()
+                .map(ClassDTO::getClassName)
+                .collect(Collectors.toList());
+        
+        model.addAttribute("classes", classNames);
         model.addAttribute("subjects", gradeService.getTeacherSubjects(teacherId));
         model.addAttribute("academicYears", gradeService.getAcademicYears());
         model.addAttribute("terms", gradeService.getTerms());
@@ -73,7 +90,14 @@ public class GradeController {
 
         if (result.hasErrors()) {
             Long teacherId = getCurrentTeacherId(userDetails);
-            model.addAttribute("classes", gradeService.getAvailableClasses());
+            
+            // Get classes for the current teacher
+            List<ClassDTO> teacherClasses = classService.getClassesForTeacher(teacherId);
+            List<String> classNames = teacherClasses.stream()
+                    .map(ClassDTO::getClassName)
+                    .collect(Collectors.toList());
+            
+            model.addAttribute("classes", classNames);
             model.addAttribute("subjects", gradeService.getTeacherSubjects(teacherId));
             model.addAttribute("academicYears", gradeService.getAcademicYears());
             model.addAttribute("terms", gradeService.getTerms());
@@ -273,8 +297,19 @@ public class GradeController {
      * Helper method to get current teacher ID
      */
     private Long getCurrentTeacherId(UserDetails userDetails) {
-        // You'll need to implement this based on your UserDetails implementation
-        // For now, return a placeholder
-        return 1L; // Replace with actual logic
+        if (userDetails == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+        
+        String username = userDetails.getUsername();
+        com.school.management.domain.User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        
+        // Verify user is a teacher
+        if (!"TEACHER".equals(user.getUserType()) && !"ADMIN".equals(user.getUserType())) {
+            throw new RuntimeException("User is not authorized to enter grades. User type: " + user.getUserType());
+        }
+        
+        return user.getId();
     }
 }

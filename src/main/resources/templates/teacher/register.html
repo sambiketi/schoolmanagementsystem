@@ -11,7 +11,7 @@
     <nav class="navbar navbar-dark bg-success navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="/dashboard">
-                <i class="bi bi-building"></i> School Management - Teacher Registration
+                <i class="bi bi-building"></i> School Management - Register Teacher
             </a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
@@ -31,39 +31,35 @@
     </nav>
 
     <div class="container mt-4">
-        <div class="row">
+        <!-- Header -->
+        <div class="row mb-4">
             <div class="col-md-12">
-                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                <h2><i class="bi bi-person-plus"></i> Register New Teacher</h2>
+                <p class="text-muted">Fill in the details to add a new teacher to the system</p>
             </div>
         </div>
 
+        <!-- Registration Form -->
         <div class="card">
             <div class="card-header bg-success text-white">
-                <h4><i class="bi bi-person-plus"></i> Register New Teacher</h4>
+                <h5 class="mb-0"><i class="bi bi-person-badge"></i> Teacher Information</h5>
             </div>
             <div class="card-body">
                 <form th:action="@{/teachers/register}" th:object="${teacher}" method="post">
                     <!-- Personal Information -->
-                    <h5 class="text-success">Personal Information</h5>
+                    <h6 class="border-bottom pb-2 mb-3">Personal Information</h6>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Full Name *</label>
-                            <input type="text" class="form-control" th:field="*{fullName}" required>
+                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{fullName}" 
+                                   placeholder="Enter full name" required>
+                            <div th:if="${#fields.hasErrors('fullName')}" class="text-danger">
+                                <small th:errors="*{fullName}"></small>
+                            </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Date of Birth *</label>
-                            <input type="date" class="form-control" th:field="*{dateOfBirth}" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Gender *</label>
-                            <select class="form-select" th:field="*{gender}" required>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select" th:field="*{gender}">
                                 <option value="">Select Gender</option>
                                 <option value="MALE">Male</option>
                                 <option value="FEMALE">Female</option>
@@ -74,55 +70,80 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" th:field="*{phoneNumber}">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" th:field="*{dateOfBirth}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control" rows="2" th:field="*{address}"></textarea>
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" th:field="*{phoneNumber}" 
+                                   placeholder="Enter phone number">
                         </div>
                     </div>
 
-                    <hr class="my-4">
-                    <h5 class="text-success">Login Credentials</h5>
-                    
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" th:field="*{address}" rows="2" 
+                                  placeholder="Enter address"></textarea>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <h6 class="border-bottom pb-2 mb-3 mt-4">Contact Information</h6>
                     <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Username *</label>
-                            <input type="text" class="form-control" th:field="*{username}" required>
-                            <small class="text-muted">Used for login</small>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" th:field="*{email}" 
+                                   placeholder="Enter email" required>
+                            <div th:if="${#fields.hasErrors('email')}" class="text-danger">
+                                <small th:errors="*{email}"></small>
+                            </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Email *</label>
-                            <input type="email" class="form-control" th:field="*{email}" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Password *</label>
-                            <input type="password" class="form-control" th:field="*{password}" required>
-                            <small class="text-muted">Minimum 6 characters</small>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Official Email</label>
+                            <input type="email" class="form-control" th:field="*{officialEmail}" 
+                                   placeholder="Enter official email">
                         </div>
                     </div>
 
-                    <hr class="my-4">
-                    <h5 class="text-success">Employment Information</h5>
+                    <!-- Account Information -->
+                    <h6 class="border-bottom pb-2 mb-3 mt-4">Account Information</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{username}" 
+                                   placeholder="Enter username" required>
+                            <div th:if="${#fields.hasErrors('username')}" class="text-danger">
+                                <small th:errors="*{username}"></small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" th:field="*{password}" 
+                                   placeholder="Enter password" required>
+                            <div th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                <small th:errors="*{password}"></small>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Employment Information -->
+                    <h6 class="border-bottom pb-2 mb-3 mt-4">Employment Information</h6>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Employee Number *</label>
-                            <input type="text" class="form-control" th:field="*{employeeNumber}" required>
-                            <small class="text-muted">e.g., T2025001</small>
+                            <label class="form-label">Employee Number</label>
+                            <input type="text" class="form-control" th:field="*{employeeNumber}" 
+                                   placeholder="Auto-generated if empty">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Hire Date *</label>
+                            <label class="form-label">Hire Date <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" th:field="*{hireDate}" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Employment Type *</label>
-                            <select class="form-select" th:field="*{employmentType}" required>
+                            <label class="form-label">Employment Type</label>
+                            <select class="form-select" th:field="*{employmentType}">
                                 <option value="">Select Type</option>
                                 <option th:each="type : ${employmentTypes}" 
                                         th:value="${type}" 
-                                        th:text="${type}"></option>
+                                        th:text="${type}">PERMANENT</option>
                             </select>
                         </div>
                     </div>
@@ -131,97 +152,73 @@
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Contract End Date</label>
                             <input type="date" class="form-control" th:field="*{contractEndDate}">
-                            <small class="text-muted">Required for contract employees</small>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Salary Grade</label>
-                            <input type="text" class="form-control" th:field="*{salaryGrade}">
+                            <input type="text" class="form-control" th:field="*{salaryGrade}" 
+                                   placeholder="e.g., SG-15">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Administrative Hours/Week</label>
+                            <input type="number" class="form-control" th:field="*{administrativeHoursPerWeek}" 
+                                   min="0" max="40">
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Qualification Summary</label>
-                            <textarea class="form-control" rows="3" th:field="*{qualificationSummary}" 
-                                      placeholder="Degrees, certifications, specializations..."></textarea>
-                        </div>
-                    </div>
-
-                    <hr class="my-4">
-                    <h5 class="text-success">Teaching Information</h5>
-
+                    <!-- Professional Information -->
+                    <h6 class="border-bottom pb-2 mb-3 mt-4">Professional Information</h6>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Subjects Certified</label>
-                            <select class="form-select" th:field="*{subjectsCertified}" multiple size="5">
-                                <option value="Mathematics">Mathematics</option>
-                                <option value="Physics">Physics</option>
-                                <option value="Chemistry">Chemistry</option>
-                                <option value="Biology">Biology</option>
-                                <option value="English">English</option>
-                                <option value="History">History</option>
-                                <option value="Geography">Geography</option>
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="Physical Education">Physical Education</option>
-                                <option value="Art">Art</option>
-                                <option value="Music">Music</option>
-                                <option value="French">French</option>
-                                <option value="Spanish">Spanish</option>
-                                <option value="Kiswahili">Kiswahili</option>
-                            </select>
-                            <small class="text-muted">Hold Ctrl/Cmd to select multiple</small>
+                            <label class="form-label">Qualification Summary</label>
+                            <textarea class="form-control" th:field="*{qualificationSummary}" 
+                                      rows="2" placeholder="e.g., B.Ed, M.Sc in Mathematics"></textarea>
                         </div>
-                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Subjects Certified</label>
+                            <input type="text" class="form-control" th:field="*{subjectsCertified}" 
+                                   placeholder="Comma-separated list (e.g., Math, Physics, Chemistry)">
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Department Affiliations</label>
                             <select class="form-select" th:field="*{departmentAffiliations}" multiple size="5">
                                 <option th:each="dept : ${departments}" 
                                         th:value="${dept.id}" 
-                                        th:text="${dept.name}"></option>
+                                        th:text="${dept.name}">Science</option>
                             </select>
-                            <small class="text-muted">Select primary department first</small>
+                            <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple departments</small>
                         </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Official Email</label>
-                            <input type="email" class="form-control" th:field="*{officialEmail}">
-                            <small class="text-muted">School email address</small>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Office Extension</label>
-                            <input type="text" class="form-control" th:field="*{officeExtension}">
-                        </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label class="form-label">Office Room</label>
-                            <input type="text" class="form-control" th:field="*{officeRoom}">
+                            <input type="text" class="form-control" th:field="*{officeRoom}" 
+                                   placeholder="e.g., Room 101">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Office Extension</label>
+                            <input type="text" class="form-control" th:field="*{officeExtension}" 
+                                   placeholder="e.g., 123">
                         </div>
                     </div>
-
-                    <hr class="my-4">
-                    <h5 class="text-success">Workload Information</h5>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Teaching Hours/Week</label>
-                            <input type="number" class="form-control" th:field="*{teachingHoursPerWeek}" min="0" max="40">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Administrative Hours/Week</label>
-                            <input type="number" class="form-control" th:field="*{administrativeHoursPerWeek}" min="0" max="40">
+                            <input type="number" class="form-control" th:field="*{teachingHoursPerWeek}" 
+                                   min="0" max="40">
                         </div>
                     </div>
 
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-save"></i> Register Teacher
-                            </button>
-                            <a href="/teachers" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i> Cancel
-                            </a>
-                        </div>
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="/teachers" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Register Teacher
+                        </button>
                     </div>
                 </form>
             </div>
@@ -229,12 +226,5 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Additional script for multiple select hints -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // You can add any custom JavaScript here
-        });
-    </script>
 </body>
 </html>

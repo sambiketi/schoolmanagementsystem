@@ -2,6 +2,9 @@ package com.school.management.web;
 
 import com.school.management.domain.Student;
 import com.school.management.service.StudentService;
+import com.school.management.service.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +17,11 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService studentService;
+    private final UserService userService;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService, UserService userService) {
         this.studentService = studentService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -34,9 +39,12 @@ public class StudentController {
 
     @PostMapping("/register")
     public String registerStudent(@ModelAttribute StudentService.StudentRegistrationDto dto,
+                                 @AuthenticationPrincipal UserDetails userDetails,
                                  RedirectAttributes redirectAttributes) {
         try {
-            Student student = studentService.registerStudent(dto);
+            // Get current user ID for audit logging
+            Long currentUserId = getCurrentUserId(userDetails);
+            Student student = studentService.registerStudent(dto, currentUserId);
             redirectAttributes.addFlashAttribute("success", 
                 "Student registered successfully! Display ID: " + student.getUser().getDisplayId());
             return "redirect:/students";
@@ -101,5 +109,22 @@ public class StudentController {
         List<Student> students = studentService.getStudentsByTeacher(teacherId);
         model.addAttribute("students", students);
         return "student/list";
+    }
+
+    /**
+     * Get current user ID from authentication
+     */
+    private Long getCurrentUserId(UserDetails userDetails) {
+        if (userDetails == null) {
+            // Return a default admin user ID or throw exception
+            // For now, return 1 (assuming admin user with ID 1 exists)
+            return 1L;
+        }
+        
+        String username = userDetails.getUsername();
+        com.school.management.domain.User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        
+        return user.getId();
     }
 }

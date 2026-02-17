@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Departments - School Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="bi bi-building"></i> School Management - Departments
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Alerts -->
+        <div class="row">
+            <div class="col-md-12">
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2><i class="bi bi-diagram-3"></i> Departments Management</h2>
+                <p class="text-muted">Manage organizational departments and their configurations</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/departments/create" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Create New Department
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title">Total Departments</h6>
+                                <h2 class="mb-0" th:text="${departments.size()}">0</h2>
+                            </div>
+                            <i class="bi bi-diagram-3 fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title">Active Departments</h6>
+                                <h2 class="mb-0" th:text="${#lists.size(departments.?[isActive == true])}">0</h2>
+                            </div>
+                            <i class="bi bi-check-circle fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title">Can Create Spreadsheets</h6>
+                                <h2 class="mb-0" th:text="${#lists.size(departments.?[canCreateSpreadsheets == true])}">0</h2>
+                            </div>
+                            <i class="bi bi-file-earmark-spreadsheet fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Departments Table -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-table"></i> Departments List</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${departments.isEmpty()}">
+                    <p class="text-muted text-center my-5">
+                        <i class="bi bi-info-circle fs-1 d-block"></i>
+                        No departments found. 
+                        <a href="/departments/create">Create a new department</a>
+                    </p>
+                </div>
+                <div th:if="${!departments.isEmpty()}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Permissions</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="department : ${departments}">
+                                <td>
+                                    <strong th:text="${department.code}">PRIN</strong>
+                                </td>
+                                <td>
+                                    <strong th:text="${department.name}">Principal's Office</strong>
+                                </td>
+                                <td>
+                                    <small class="text-muted" th:text="${department.description}">Principal's office department</small>
+                                </td>
+                                <td>
+                                    <span th:if="${department.canCreateSpreadsheets}" 
+                                          class="badge bg-info me-1">Spreadsheets</span>
+                                    <span th:if="${department.canSubmitReports}" 
+                                          class="badge bg-success me-1">Reports</span>
+                                    <span th:text="|Max: ${department.maxSpreadsheets}|" 
+                                          class="badge bg-secondary">Max: 10</span>
+                                </td>
+                                <td>
+                                    <span th:if="${department.isActive}" 
+                                          class="badge bg-success">Active</span>
+                                    <span th:if="${!department.isActive}" 
+                                          class="badge bg-danger">Inactive</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{/departments/{id}(id=${department.id})}" 
+                                           class="btn btn-outline-primary" 
+                                           title="View Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/departments/{id}/edit(id=${department.id})}" 
+                                           class="btn btn-outline-success" 
+                                           title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" 
+                                                class="btn btn-outline-warning" 
+                                                title="Toggle Active"
+                                                th:onclick="'toggleDepartment(' + ${department.id} + ')'">
+                                            <i class="bi bi-power"></i>
+                                        </button>
+                                        <button type="button" 
+                                                class="btn btn-outline-danger" 
+                                                title="Delete"
+                                                data-bs-toggle="modal"
+                                                th:data-bs-target="|#deleteModal${department.id}|">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" th:id="|deleteModal${department.id}|" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-danger text-white">
+                                                    <h5 class="modal-title">
+                                                        <i class="bi bi-exclamation-triangle"></i> 
+                                                        Delete Department
+                                                    </h5>
+                                                    <button type="button" class="btn-close" 
+                                                            data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Are you sure you want to delete 
+                                                       <strong th:text="${department.name}"></strong>?</p>
+                                                    <p class="text-muted small">
+                                                        This action cannot be undone. All associated data will be marked as orphaned.
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" 
+                                                            data-bs-dismiss="modal">
+                                                        Cancel
+                                                    </button>
+                                                    <form th:action="@{/departments/{id}/delete(id=${department.id})}" 
+                                                          method="post" style="display: inline;">
+                                                        <button type="submit" class="btn btn-danger">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function toggleDepartment(departmentId) {
+            if (confirm('Are you sure you want to toggle department status?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/departments/' + departmentId + '/toggle-active';
+                
+                // You'll need to add this meta tag in your layout or head section
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_csrf';
+                csrfInput.value = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+                
+                if (csrfInput.value) {
+                    form.appendChild(csrfInput);
+                }
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+</body>
+</html>

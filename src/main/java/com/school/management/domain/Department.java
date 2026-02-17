@@ -49,6 +49,27 @@ public class Department {
     @Column(name = "created_by", nullable = false)
     private Long createdBy;
     
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @Column(name = "updated_by")
+    private Long updatedBy;
+    
     @Column(name = "is_active")
     private Boolean isActive;
+    
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (isActive == null) {
+            isActive = true;
+        }
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

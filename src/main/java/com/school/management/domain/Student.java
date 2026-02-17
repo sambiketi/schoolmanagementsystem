@@ -30,7 +30,11 @@ public class Student {
     private Integer admissionYear;
     
     @Column(name = "current_class", length = 50)
-    private String currentClass;
+    private String currentClass; // Keeping for backward compatibility
+    
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private SchoolClass schoolClass;
     
     @Column(name = "class_teacher_id")
     private Long classTeacherId;

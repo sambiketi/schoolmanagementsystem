@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Grade Entry - School Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-warning navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="bi bi-building"></i> School Management - Grade Entry
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/teachers/dashboard">
+                            <i class="bi bi-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/grades/my-grades">
+                            <i class="bi bi-list"></i> My Grades
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Alerts -->
+        <div class="row">
+            <div class="col-md-12">
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4><i class="bi bi-pencil-square"></i> Enter Grades</h4>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/grades/entry}" th:object="${gradeEntry}" method="post" id="gradeForm">
+                    <!-- Selection Section -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label class="form-label">Class/Group *</label>
+                            <select class="form-select" th:field="*{classGroup}" id="classSelect" required>
+                                <option value="">Select Class</option>
+                                <option th:each="cls : ${classes}" 
+                                        th:value="${cls}" 
+                                        th:text="${cls}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Subject *</label>
+                            <select class="form-select" th:field="*{subjectName}" id="subjectSelect" required>
+                                <option value="">Select Subject</option>
+                                <option th:each="subject : ${subjects}" 
+                                        th:value="${subject}" 
+                                        th:text="${subject}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Academic Year *</label>
+                            <select class="form-select" th:field="*{academicYear}" required>
+                                <option th:each="year : ${academicYears}" 
+                                        th:value="${year}" 
+                                        th:text="${year}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Term *</label>
+                            <select class="form-select" th:field="*{termNumber}" required>
+                                <option value="1">Term 1</option>
+                                <option value="2">Term 2</option>
+                                <option value="3">Term 3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Grading Date *</label>
+                            <input type="date" class="form-control" th:field="*{gradingDate}" 
+                                   th:value="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}" required>
+                        </div>
+                    </div>
+
+                    <!-- Grade Type Selection -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label class="form-label">Grade Type</label>
+                            <select class="form-select" th:field="*{gradeType}">
+                                <option value="LETTER">Letter Grades (A, B, C...)</option>
+                                <option value="PERCENTAGE">Percentage (0-100)</option>
+                                <option value="DESCRIPTIVE">Descriptive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Max Possible Value</label>
+                            <input type="text" class="form-control" th:field="*{maxPossibleValue}" value="A">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-info mt-4" id="loadStudentsBtn">
+                                <i class="bi bi-people"></i> Load Students
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Students Grade Table -->
+                    <div class="table-responsive" id="studentsTable" style="display: none;">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th width="15%">Student ID</th>
+                                    <th width="25%">Student Name</th>
+                                    <th width="15%">Current Class</th>
+                                    <th width="15%">Grade *</th>
+                                    <th width="25%">Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentRows">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="row mt-4" id="actionButtons" style="display: none;">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-save"></i> Save as Draft
+                            </button>
+                            <button type="button" class="btn btn-success" id="saveAndSubmit">
+                                <i class="bi bi-send"></i> Save & Submit for Review
+                            </button>
+                            <a href="/teachers/dashboard" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('loadStudentsBtn').addEventListener('click', function() {
+            const className = document.getElementById('classSelect').value;
+            
+            if (!className) {
+                alert('Please select a class first');
+                return;
+            }
+
+            // Fetch students for the selected class
+            fetch('/grades/entry/students?className=' + encodeURIComponent(className))
+                .then(response => response.json())
+                .then(students => {
+                    const tbody = document.getElementById('studentRows');
+                    tbody.innerHTML = '';
+                    
+                    students.forEach((student, index) => {
+                        const row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${student.displayId}</td>
+                                <td>${student.name}</td>
+                                <td>${student.currentClass}</td>
+                                <td>
+                                    <input type="text" 
+                                           class="form-control grade-input" 
+                                           name="studentGrades[${index}].gradeValue"
+                                           data-student-id="${student.id}"
+                                           data-student-name="${student.name}"
+                                           required>
+                                    <input type="hidden" 
+                                           name="studentGrades[${index}].studentId" 
+                                           value="${student.id}">
+                                    <input type="hidden" 
+                                           name="studentGrades[${index}].studentName" 
+                                           value="${student.name}">
+                                </td>
+                                <td>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="studentGrades[${index}].comments"
+                                           placeholder="Optional comments">
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+
+                    // Show the table and buttons
+                    document.getElementById('studentsTable').style.display = 'block';
+                    document.getElementById('actionButtons').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error loading students:', error);
+                    alert('Error loading students. Please try again.');
+                });
+        });
+
+        // Handle grade type change
+        document.querySelector('[name="gradeType"]').addEventListener('change', function(e) {
+            const gradeType = e.target.value;
+            const gradeInputs = document.querySelectorAll('.grade-input');
+            
+            gradeInputs.forEach(input => {
+                if (gradeType === 'LETTER') {
+                    input.placeholder = 'A, B, C, etc.';
+                    input.pattern = '[A-F][+-]?';
+                } else if (gradeType === 'PERCENTAGE') {
+                    input.placeholder = '0-100';
+                    input.type = 'number';
+                    input.min = '0';
+                    input.max = '100';
+                } else {
+                    input.placeholder = 'Enter grade description';
+                    input.type = 'text';
+                }
+            });
+        });
+
+        // Save and submit functionality
+        document.getElementById('saveAndSubmit').addEventListener('click', function() {
+            if (confirm('Are you sure you want to submit these grades for review?')) {
+                // Add a hidden field to indicate submission
+                const form = document.getElementById('gradeForm');
+                const submitInput = document.createElement('input');
+                submitInput.type = 'hidden';
+                submitInput.name = 'submitForReview';
+                submitInput.value = 'true';
+                form.appendChild(submitInput);
+                form.submit();
+            }
+        });
+
+        // Form validation
+        document.getElementById('gradeForm').addEventListener('submit', function(e) {
+            const gradeInputs = document.querySelectorAll('.grade-input');
+            let isValid = true;
+            
+            gradeInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please enter grades for all students');
+            }
+        });
+    </script>
+
+    <style>
+        .is-invalid {
+            border-color: #dc3545;
+        }
+        .grade-input {
+            min-width: 80px;
+        }
+    </style>
+</body>
+</html>

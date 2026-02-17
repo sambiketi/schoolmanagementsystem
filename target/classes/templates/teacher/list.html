@@ -91,10 +91,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="card-title">On Leave</h6>
-                                <h2 class="mb-0" th:text="${teachers.?
-                                    .stream()
-                                    .filter(t -> t.employmentStatus == 'ON_LEAVE')
-                                    .count()}">0</h2>
+                                <h2 class="mb-0" th:text="${#lists.size(teachers.?[employmentStatus == 'ON_LEAVE'])}"></h2>
                             </div>
                             <i class="bi bi-calendar-x fs-1"></i>
                         </div>
@@ -176,7 +173,7 @@
                                           th:text="${subject}">Math</span>
                                     <span th:if="${teacher.subjectsCertified.size() > 2}"
                                           class="badge bg-secondary"
-                                          th:text="'+' + (${teacher.subjectsCertified.size()} - 2)">+2</span>
+                                          th:text="|+${teacher.subjectsCertified.size() - 2}|">+2</span>
                                 </td>
                                 <td>
                                     <span th:if="${teacher.primaryDepartmentName}"
@@ -199,12 +196,12 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <a th:href="@{'/teachers/' + ${teacher.id}}" 
+                                        <a th:href="@{/teachers/{id}(id=${teacher.id})}" 
                                            class="btn btn-outline-primary" 
                                            title="View Details">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a th:href="@{'/teachers/' + ${teacher.id} + '/edit'}" 
+                                        <a th:href="@{/teachers/{id}/edit(id=${teacher.id})}" 
                                            class="btn btn-outline-success" 
                                            title="Edit">
                                             <i class="bi bi-pencil"></i>
@@ -213,13 +210,13 @@
                                                 class="btn btn-outline-danger" 
                                                 title="Deactivate"
                                                 data-bs-toggle="modal"
-                                                th:data-bs-target="'#deactivateModal' + ${teacher.id}">
+                                                th:data-bs-target="|#deactivateModal${teacher.id}|">
                                             <i class="bi bi-person-x"></i>
                                         </button>
                                     </div>
 
                                     <!-- Deactivate Modal -->
-                                    <div class="modal fade" th:id="'deactivateModal' + ${teacher.id}" tabindex="-1">
+                                    <div class="modal fade" th:id="|deactivateModal${teacher.id}|" tabindex="-1">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-danger text-white">
@@ -243,7 +240,7 @@
                                                             data-bs-dismiss="modal">
                                                         Cancel
                                                     </button>
-                                                    <form th:action="@{'/teachers/' + ${teacher.id} + '/deactivate'}" 
+                                                    <form th:action="@{/teachers/{id}/deactivate(id=${teacher.id})}" 
                                                           method="post" style="display: inline;">
                                                         <button type="submit" class="btn btn-danger">
                                                             Deactivate
